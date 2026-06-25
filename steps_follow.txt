@@ -1029,4 +1029,197 @@ So — green light, keep going exactly as we are. Now, back to Day 5: did `train
 --------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------
 
+Strong result — and notice it actually *beat* your spec's target range. You expected 85-95%, and all three models landed at **94-96%**, with Random Forest on top at 95.6%. That's not a fluke either — all three models clustering tightly together (94-96%) tells you the *features themselves* are doing excellent work, since even a weaker algorithm like KNN performs nearly as well as the strongest one.
 
+## Reading these numbers properly
+
+- **Random Forest winning** is expected and common — it handles non-linear relationships between features well and doesn't get thrown off by features on different scales as easily as the others
+- **SVM and KNN close behind** (94.1-94.6%) confirms your feature engineering (Day 3) was the real hero here, not just model choice — good features make almost any algorithm work reasonably well; bad features make even the best algorithm struggle
+- **All three above 94%** means your 4 signal classes are genuinely well-separated in feature space — there's minimal class confusion happening
+
+A word that fits well right now: when multiple different algorithms independently arrive at similar high performance on the same data, that's called **convergence** (*noun — different methods or approaches arriving at the same conclusion or result*) — and it's a good sign of *robustness*, not luck. If only one model had scored 95% and the others scored 60%, you'd worry the high score was a fluke tied to that one algorithm's quirks. Here, convergence across 3 different mathematical approaches is much more convincing evidence the classification problem itself is solid.
+
+## Commit Day 5
+
+```powershell
+cd ..
+git add .
+git commit -m "feat: train and evaluate Random Forest, SVM, and KNN classifiers (94-96% accuracy)"
+git push
+```
+
+Note: `results/best_model.pkl` and `results/scaler.pkl` are binary files — they'll get committed fine since we only gitignored `results/*.png`, not `.pkl` files. That's actually correct here, since these are needed by the dashboard later, unlike the dataset CSV which is easily regenerable.
+
+---
+
+## Day 6: Visualization — confusion matrix, accuracy comparison, feature importance
+
+Now we make these numbers visual, per Phase 6 of your spec. Open `src\visualize.py` (new file):
+
+```powershell
+New-Item -ItemType File -Path "src\visualize.py" -Force
+```
+
+```python
+import os
+import sys
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+
+sys.path.append(os.path.dirname(__file__))
+from train_model import train_and_evaluate, load_dataset
+
+
+def plot_confusion_matrices(trained_models, X_test, y_test, output_dir="../results"):
+    """One confusion matrix per model, saved as separate images."""
+    labels = sorted(y_test.unique())
+
+    for name, model in trained_models.items():
+        predictions = model.predict(X_test)
+        cm = confusion_matrix(y_test, predictions, labels=labels)
+
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
+        fig, ax = plt.subplots(figsize=(6, 5))
+        disp.plot(ax=ax, cmap="Blues")
+        ax.set_title(f"Confusion Matrix — {name}")
+
+        safe_name = name.lower().replace(" ", "_")
+        path = os.path.join(output_dir, f"confusion_matrix_{safe_name}.png")
+        plt.tight_layout()
+        plt.savefig(path)
+        plt.close(fig)
+        print(f"Saved {path}")
+
+
+def plot_accuracy_comparison(results, output_dir="../results"):
+    """Bar chart comparing accuracy across models."""
+    names = list(results.keys())
+    accuracies = [results[name]["accuracy"] for name in names]
+
+    fig, ax = plt.subplots(figsize=(6, 4))
+    bars = ax.bar(names, accuracies, color=["#4C72B0", "#DD8452", "#55A868"])
+    ax.set_ylim(0, 1)
+    ax.set_ylabel("Accuracy")
+    ax.set_title("Model Accuracy Comparison")
+
+    for bar, acc in zip(bars, accuracies):
+        ax.text(bar.get_x() + bar.get_width() / 2, acc + 0.02,
+                 f"{acc:.3f}", ha="center", fontweight="bold")
+
+    path = os.path.join(output_dir, "accuracy_comparison.png")
+    plt.tight_layout()
+    plt.savefig(path)
+    plt.close(fig)
+    print(f"Saved {path}")
+
+
+def plot_feature_importance(rf_model, feature_names, output_dir="../results"):
+    """Random Forest's built-in feature importance scores."""
+    importances = rf_model.feature_importances_
+    sorted_idx = np.argsort(importances)[::-1]
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+    ax.bar(range(len(importances)), importances[sorted_idx], color="#4C72B0")
+    ax.set_xticks(range(len(importances)))
+    ax.set_xticklabels([feature_names[i] for i in sorted_idx], rotation=45, ha="right")
+    ax.set_title("Feature Importance — Random Forest")
+    ax.set_ylabel("Importance")
+
+    path = os.path.join(output_dir, "feature_importance.png")
+    plt.tight_layout()
+    plt.savefig(path)
+    plt.close(fig)
+    print(f"Saved {path}")
+
+
+if __name__ == "__main__":
+    results, trained_models, X_test_scaled, y_test = train_and_evaluate()
+    X, y = load_dataset()
+    feature_names = list(X.columns)
+
+    plot_confusion_matrices(trained_models, X_test_scaled, y_test)
+    plot_accuracy_comparison(results)
+    plot_feature_importance(trained_models["Random Forest"], feature_names)
+
+    print("\nAll visualizations saved to results/")
+```
+
+## Run it
+
+```powershell
+cd src
+python visualize.py
+```
+
+### What you should see
+- It re-runs training (prints the same accuracy numbers again — that's expected, just a side effect of reusing `train_and_evaluate()`)
+- 5 new images in `results/`: 3 confusion matrices, 1 accuracy bar chart, 1 feature importance chart
+
+### Quick concept notes
+
+A word that fits perfectly here: a confusion matrix shows you exactly where a model gets things wrong, not just *that* it's wrong — it's a diagnostic tool, and the pattern of errors is sometimes called the model's **failure mode** (*noun — the specific, characteristic way something tends to go wrong*). For instance, if your model ever confuses "chirp" with "noisy" more than other pairs, that's worth a sentence in your README — it shows you actually read your own results instead of just reporting a single accuracy number.
+
+Run it, and tell me what the feature importance chart shows as the **top 2-3 most important features** — I'd bet `dominant_frequency` and `energy` rank highest, but let's confirm with your actual numbers.
+
+-----------------------------------------
+(venv) PS E:\Radar-Signal-Classifier> cd src
+(venv) PS E:\Radar-Signal-Classifier\src> python visualize.py
+
+Random Forest:
+  Accuracy:  0.9563
+  Precision: 0.9565
+  Recall:    0.9563
+  F1 Score:  0.9562
+
+SVM:
+  Accuracy:  0.9463
+  Precision: 0.9489
+  Recall:    0.9463
+  F1 Score:  0.9461
+
+KNN:
+  Accuracy:  0.9413
+  Precision: 0.9421
+  Recall:    0.9413
+  F1 Score:  0.9412
+
+Best model: Random Forest (saved to results/best_model.pkl)
+Saved ../results\confusion_matrix_random_forest.png
+Saved ../results\confusion_matrix_svm.png
+Saved ../results\confusion_matrix_knn.png
+Saved ../results\accuracy_comparison.png
+Saved ../results\feature_importance.png
+
+All visualizations saved to results/
+(venv) PS E:\Radar-Signal-Classifier\src> 
+
+-------------------------------------------------------------------------------------
+
+All 5 files saved cleanly, same accuracy numbers as before (exactly as expected, since `random_state=42` makes the split and training fully reproducible — that's a nice side benefit of setting a fixed seed).
+
+Let's actually look at the feature importance chart rather than guessing — let me view it directly.Right — that path is on *your* machine, not in my environment. I don't have direct access to your filesystem, only to files you explicitly upload here. My mistake for trying to view it directly.
+
+Easiest way to check: open `results\feature_importance.png` yourself (File Explorer, double-click it, or drag it into this chat if you want me to actually look at it). Or, even faster, just print the raw numbers instead of reading a chart:
+
+## Quick way to see the actual importance values
+
+```powershell
+python -c "
+import sys; sys.path.append('.')
+from train_model import train_and_evaluate, load_dataset
+results, trained_models, X_test, y_test = train_and_evaluate()
+X, y = load_dataset()
+rf = trained_models['Random Forest']
+for name, score in sorted(zip(X.columns, rf.feature_importances_), key=lambda x: -x[1]):
+    print(f'{name}: {score:.4f}')
+"
+```
+
+This prints every feature ranked highest-to-lowest by importance score, no need to squint at a bar chart.
+
+A word that fits here, since I just corrected my own mistake: this is a good moment to flag **transparency** (*noun — being open and clear about limitations or errors rather than glossing over them*) — I can't see your local files unless you upload them, and I should've caught that before suggesting otherwise. If you ever want me to actually inspect a chart, drag-and-drop it into the chat and I can view it directly.
+
+Go ahead and run that snippet (or just open the PNG yourself) — paste me the ranked list or drop the image in, and we'll confirm the hypothesis about `dominant_frequency` and `energy`.
+
+---------------------------------------
