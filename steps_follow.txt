@@ -318,3 +318,108 @@ Run it and tell me what happened — clean success, or an error message to debug
 
 ----------------------------------------------------------------------------------
 
+Excellent — clean run. Let's lock that in with Git before moving on, so we keep the habit going from commit one.
+
+## Commit Day 1's work
+
+```powershell
+cd ..
+git add .
+git commit -m "feat: add synthetic signal generators for sine, square, chirp, and noisy classes"
+git push
+```
+
+(The `cd ..` gets you back to the project root from `src`, assuming that's where you were.)
+
+---
+
+## On to Day 2: Noise Injection (`noise.py`)
+
+Right now, noise is buried *inside* `generate_noisy_signal()` in Day 1's file. Today we pull noise into its own dedicated module, per your folder structure (`src/noise.py`), and make it reusable — so later we can add noise to *any* signal, not just the "noisy" class.
+
+Open `src\noise.py` and paste this in:
+
+```python
+import numpy as np
+
+
+def add_gaussian_noise(signal, noise_level=0.5):
+    """
+    Adds Gaussian (normal distribution) noise to any signal.
+    noise_level controls how strong the interference is.
+    """
+    noise = np.random.normal(loc=0.0, scale=noise_level, size=len(signal))
+    return signal + noise
+
+
+def add_white_noise(signal, noise_level=0.5):
+    """
+    Adds uniform white noise — every frequency disturbed roughly equally.
+    Different statistical flavor than Gaussian, but same purpose:
+    simulate real-world interference.
+    """
+    noise = np.random.uniform(low=-noise_level, high=noise_level, size=len(signal))
+    return signal + noise
+
+
+def add_noise(signal, noise_type="gaussian", noise_level=0.5):
+    """
+    Single entry point — pick noise type by string.
+    Keeps calling code clean: add_noise(my_signal, "gaussian", 0.3)
+    """
+    if noise_type == "gaussian":
+        return add_gaussian_noise(signal, noise_level)
+    elif noise_type == "white":
+        return add_white_noise(signal, noise_level)
+    else:
+        raise ValueError(f"Unknown noise_type: {noise_type}")
+
+
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+    import os
+    import sys
+
+    # Allow importing signal_generator from the same src folder
+    sys.path.append(os.path.dirname(__file__))
+    from signal_generator import generate_sine_wave, TIME
+
+    clean = generate_sine_wave()
+    gaussian_version = add_gaussian_noise(clean, noise_level=0.4)
+    white_version = add_white_noise(clean, noise_level=0.4)
+
+    fig, axs = plt.subplots(3, 1, figsize=(8, 6))
+    axs[0].plot(TIME, clean); axs[0].set_title("Clean Sine Wave")
+    axs[1].plot(TIME, gaussian_version); axs[1].set_title("Sine + Gaussian Noise")
+    axs[2].plot(TIME, white_version); axs[2].set_title("Sine + White Noise")
+
+    plt.tight_layout()
+    output_path = os.path.join("..", "results", "noise_examples.png")
+    plt.savefig(output_path)
+    print(f"Saved plot to {output_path}")
+    print("Noise injection working correctly!")
+```
+
+## Run it
+
+```powershell
+cd src
+python noise.py
+```
+
+### What you should see
+- Two success messages printed
+- `results\noise_examples.png` — three stacked plots: clean sine, Gaussian-noised version, white-noised version. The bottom two should look "fuzzier" than the top, but you should still be able to *see* the underlying sine shape through the noise.
+
+### Quick concept notes
+
+A word worth tucking away here, since it's the right moment for it: Gaussian and white noise are both ways of modeling **stochastic** (*adjective — random, governed by probability rather than a fixed rule*) interference — real-world radar receivers pick up electrical noise, atmospheric interference, etc., and none of it follows a predictable pattern, so we simulate that unpredictability mathematically.
+
+- **`np.random.normal()`** → Gaussian noise: most values cluster near 0, with occasional bigger spikes — like a bell curve. This mimics most natural electrical noise.
+- **`np.random.uniform()`** → white noise: every value between `-noise_level` and `+noise_level` is equally likely, no clustering. Different statistical shape, same disruptive effect.
+- **`add_noise()`** wrapper exists so later code (like `dataset_builder.py`) can call one function and just pass a string — cleaner than remembering two separate function names everywhere.
+
+Run it, check the plot, and let me know how it looks.
+
+-----------------------------------------------------------------------------------------------------
+
