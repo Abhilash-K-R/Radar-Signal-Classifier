@@ -423,3 +423,188 @@ Run it, check the plot, and let me know how it looks.
 
 -----------------------------------------------------------------------------------------------------
 
+Good — two for two. Let's commit and keep moving.
+
+## Commit Day 2
+
+```powershell
+cd ..
+git add .
+git commit -m "feat: add Gaussian and white noise injection module"
+git push
+```
+
+---
+
+## Day 3: Feature Extraction (`feature_extractor.py`)
+
+This is the phase your spec calls "the most important part," and it's true — this is where raw wiggly signals get converted into the handful of numbers an ML model can actually learn from. Today we build the whole feature vector: mean, std, max, min, RMS, energy, peak-to-peak, and dominant frequency (via FFT).
+
+Open `src\feature_extractor.py` and paste this in:
+
+```python
+import numpy as np
+from scipy.fft import fft, fftfreq
+
+
+def extract_mean(signal):
+    return np.mean(signal)
+
+
+def extract_std(signal):
+    return np.std(signal)
+
+
+def extract_max(signal):
+    return np.max(signal)
+
+
+def extract_min(signal):
+    return np.min(signal)
+
+
+def extract_rms(signal):
+    """Root Mean Square — overall signal magnitude, regardless of sign."""
+    return np.sqrt(np.mean(signal ** 2))
+
+
+def extract_energy(signal):
+    """Signal power/energy — sum of squared values."""
+    return np.sum(signal ** 2)
+
+
+def extract_peak_to_peak(signal):
+    """Difference between max and min — how much the signal swings."""
+    return np.max(signal) - np.min(signal)
+
+
+def extract_dominant_frequency(signal, sample_rate=500):
+    """
+    Uses FFT to find which frequency has the most energy in the signal.
+    This is the single most informative feature for telling sine/square/chirp apart.
+    """
+    n = len(signal)
+    fft_values = fft(signal)
+    fft_freqs = fftfreq(n, d=1 / sample_rate)
+
+    # Only look at the positive-frequency half (FFT output is mirrored)
+    half = n // 2
+    magnitudes = np.abs(fft_values[:half])
+    freqs = fft_freqs[:half]
+
+    # Ignore frequency 0 (the DC/average component) when finding the peak
+    if len(magnitudes) > 1:
+        dominant_idx = np.argmax(magnitudes[1:]) + 1
+    else:
+        dominant_idx = 0
+
+    return freqs[dominant_idx]
+
+
+def extract_features(signal, sample_rate=500):
+    """
+    Builds the full feature vector for one signal, matching the spec:
+    [mean, std, max, min, rms, energy, dominant_frequency]
+    """
+    return {
+        "mean": extract_mean(signal),
+        "std": extract_std(signal),
+        "max": extract_max(signal),
+        "min": extract_min(signal),
+        "rms": extract_rms(signal),
+        "energy": extract_energy(signal),
+        "peak_to_peak": extract_peak_to_peak(signal),
+        "dominant_frequency": extract_dominant_frequency(signal, sample_rate),
+    }
+
+
+if __name__ == "__main__":
+    import os
+    import sys
+    import matplotlib.pyplot as plt
+
+    sys.path.append(os.path.dirname(__file__))
+    from signal_generator import generate_sine_wave, generate_chirp_signal, TIME, SAMPLE_RATE
+
+    sine = generate_sine_wave(freq=10.0)
+    chirp_sig = generate_chirp_signal()
+
+    sine_features = extract_features(sine, SAMPLE_RATE)
+    chirp_features = extract_features(chirp_sig, SAMPLE_RATE)
+
+    print("Sine wave features:")
+    for k, v in sine_features.items():
+        print(f"  {k}: {v:.4f}")
+
+    print("\nChirp signal features:")
+    for k, v in chirp_features.items():
+        print(f"  {k}: {v:.4f}")
+
+    # Visualize the FFT of the sine wave to confirm dominant frequency detection works
+    from scipy.fft import fft, fftfreq
+    n = len(sine)
+    fft_vals = np.abs(fft(sine))[:n // 2]
+    freqs = fftfreq(n, d=1 / SAMPLE_RATE)[:n // 2]
+
+    plt.figure(figsize=(8, 4))
+    plt.plot(freqs, fft_vals)
+    plt.title("FFT of Sine Wave (freq=10 Hz) — peak should be near 10")
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Magnitude")
+    plt.xlim(0, 50)
+
+    output_path = os.path.join("..", "results", "fft_check.png")
+    plt.savefig(output_path)
+    print(f"\nSaved FFT plot to {output_path}")
+```
+
+## Run it
+
+```powershell
+cd src
+python feature_extractor.py
+```
+
+### What you should see
+- Two printed feature lists (sine and chirp), each with 8 numbers
+- For the sine wave, check that `dominant_frequency` printed close to **10** (since we generated it at `freq=10.0`) — that's your proof the FFT logic actually works
+- `results\fft_check.png` showing a spike near 10 Hz on the x-axis
+
+### Quick concept notes
+
+A word for the day, fitting for what FFT actually does: it's a kind of **deconstruction** (*noun — breaking something down into its separate underlying parts*) — a signal that looks like one wiggly line in time is secretly made of multiple frequency components added together, and FFT reveals which frequencies are actually present and how strong each one is.
+
+- **RMS vs mean**: mean of a sine wave is ~0 (positive and negative parts cancel out), which tells you nothing useful. RMS squares everything first, so it captures *magnitude* regardless of sign — much more informative for distinguishing signal strength.
+- **Energy**: similar idea to RMS but unnormalized — just the raw sum of squares. A noisy heavy signal will generally have higher energy than a clean, low-amplitude one.
+- **Dominant frequency**: this is the star feature for telling sine/square apart from chirp/noise — clean periodic signals have one strong frequency spike; chirps spread energy across a range; noise scatters it almost everywhere.
+- **Why we skip index 0 in FFT**: index 0 represents the "DC component" — basically the signal's average offset, not an actual oscillation. Skipping it ensures we find the *real* dominant frequency.
+
+Run it and paste me the printed feature values — I want to check the dominant frequency landed close to 10 Hz before we move on.
+
+-----------------
+(venv) PS E:\Radar-Signal-Classifier> cd src
+(venv) PS E:\Radar-Signal-Classifier\src> python feature_extractor.py
+Sine wave features:
+  mean: -0.0000
+  std: 0.7071
+  max: 0.9980
+  min: -0.9980
+  rms: 0.7071
+  energy: 250.0000
+  peak_to_peak: 1.9961
+  dominant_frequency: 10.0000
+
+Chirp signal features:
+  mean: 0.0216
+  std: 0.7105
+  max: 1.0000
+  min: -0.9999
+  rms: 0.7109
+  energy: 252.6542
+  peak_to_peak: 1.9999
+  dominant_frequency: 8.0000
+
+Saved FFT plot to ..\results\fft_check.png
+(venv) PS E:\Radar-Signal-Classifier\src> 
+-------------------------------------------------------------------------------------------------------------
+
