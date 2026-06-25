@@ -608,3 +608,143 @@ Saved FFT plot to ..\results\fft_check.png
 (venv) PS E:\Radar-Signal-Classifier\src> 
 -------------------------------------------------------------------------------------------------------------
 
+That's exactly what we wanted — `dominant_frequency: 10.0000` for the sine wave, dead-on match with the `freq=10.0` we generated it at. That confirms the FFT logic is sound, not just running without errors but actually *correct*.
+
+Quick sanity check on the chirp result too: it printed `8.0000`, which makes sense — a chirp's frequency sweeps across a range (we set `f0=2, f1=50`), so FFT picks up wherever the *most energy* concentrated across that sweep, not one fixed value. That's expected behavior, not a bug.
+
+A word for the day fits nicely here: what you just did — checking that dominant_frequency matched the known input — is called **validation** (*noun — confirming that something behaves as expected against a known, trusted reference*). It's a habit worth keeping through every phase: whenever you build something with a "correct" answer you can predict in advance, test against that before trusting the rest of the output.
+
+## Commit Day 3
+
+```powershell
+cd ..
+git add .
+git commit -m "feat: add feature extraction module (mean, std, rms, energy, fft dominant frequency)"
+git push
+```
+
+---
+
+## Day 4: Dataset Builder — turning signals into `dataset.csv`
+
+This is Phase 4 from your spec — the glue step. We loop over all 4000 signals (1000 × 4 classes), run each through `extract_features()`, and write everything into one clean CSV with a `label` column.
+
+Open `src\dataset_builder.py` (new file) and paste this in:
+
+```powershell
+New-Item -ItemType File -Path "src\dataset_builder.py" -Force
+```
+
+```python
+import os
+import sys
+import csv
+
+sys.path.append(os.path.dirname(__file__))
+from signal_generator import (
+    generate_sine_wave,
+    generate_square_wave,
+    generate_chirp_signal,
+    generate_noisy_signal,
+    SAMPLE_RATE,
+)
+from feature_extractor import extract_features
+
+import numpy as np
+
+
+def build_dataset(n_per_class=1000, output_path="../data/dataset.csv"):
+    """
+    Generates n_per_class signals for each of the 4 classes,
+    extracts features from each, and writes everything to a CSV.
+    """
+    rows = []
+
+    for i in range(n_per_class):
+        # --- Class 1: Sine ---
+        freq = np.random.uniform(3, 8)
+        amp = np.random.uniform(0.8, 1.2)
+        sine = generate_sine_wave(freq, amp)
+        sine_feats = extract_features(sine, SAMPLE_RATE)
+        sine_feats["label"] = "sine"
+        rows.append(sine_feats)
+
+        # --- Class 2: Square ---
+        freq_sq = np.random.uniform(3, 8)
+        square = generate_square_wave(freq_sq, amp)
+        square_feats = extract_features(square, SAMPLE_RATE)
+        square_feats["label"] = "square"
+        rows.append(square_feats)
+
+        # --- Class 3: Chirp ---
+        f0 = np.random.uniform(1, 5)
+        f1 = np.random.uniform(30, 60)
+        chirp_sig = generate_chirp_signal(f0, f1, amp)
+        chirp_feats = extract_features(chirp_sig, SAMPLE_RATE)
+        chirp_feats["label"] = "chirp"
+        rows.append(chirp_feats)
+
+        # --- Class 4: Noisy ---
+        noisy = generate_noisy_signal(freq, amp)
+        noisy_feats = extract_features(noisy, SAMPLE_RATE)
+        noisy_feats["label"] = "noisy"
+        rows.append(noisy_feats)
+
+        if (i + 1) % 200 == 0:
+            print(f"Processed {i + 1}/{n_per_class} per class...")
+
+    # Write to CSV
+    fieldnames = list(rows[0].keys())
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+    with open(output_path, mode="w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(f"\nDataset built successfully: {len(rows)} total rows")
+    print(f"Saved to: {output_path}")
+
+
+if __name__ == "__main__":
+    build_dataset(n_per_class=1000)
+```
+
+## Run it
+
+```powershell
+python dataset_builder.py
+```
+
+### What you should see
+- Progress messages every 200 signals per class (`Processed 200/1000...`, etc.)
+- Final message: `Dataset built successfully: 4000 total rows`
+- A new file: `data\dataset.csv`
+
+### Quick concept notes
+
+A word that fits well here: what this script does is called **aggregation** (*noun — combining many individual items into one consolidated whole*) — taking 4000 separate signal arrays and condensing each one down to just 8 numbers in a single unified table, which is exactly the format `scikit-learn` expects for training.
+
+- **Why `os.makedirs(..., exist_ok=True)`**: ensures the `data/` folder exists before we try writing into it — avoids a crash if the folder somehow got skipped earlier.
+- **`csv.DictWriter`**: writes dictionaries directly as CSV rows, matching keys to column headers automatically — cleaner than manually joining strings with commas.
+- **The `label` column**: this is the answer key — what the ML model is trying to predict. Without it, this would just be unsupervised data with no target.
+
+One thing to flag: since `dataset.csv` lands in `.gitignore` (we excluded `*.csv` earlier), it won't get pushed to GitHub — intentional, since it's a *generated* file, not authored code. Anyone cloning your repo can regenerate it by running this script.
+
+Run it and paste me the final output — especially confirm it says **4000 total rows**.
+
+------------------------------
+(venv) PS E:\Radar-Signal-Classifier> cd src                                                                                 
+(venv) PS E:\Radar-Signal-Classifier\src> python dataset_builder.py                                                          
+Processed 200/1000 per class...
+Processed 400/1000 per class...
+Processed 600/1000 per class...
+Processed 800/1000 per class...
+Processed 1000/1000 per class...
+
+Dataset built successfully: 4000 total rows
+Saved to: ../data/dataset.csv
+(venv) PS E:\Radar-Signal-Classifier\src> 
+
+------------------------------------------------------------------------------------------------------------------
+
