@@ -1,0 +1,320 @@
+Makes sense — let's get GitHub set up properly first, *then* touch any code. Nothing's lost; we'll redo Day 1 right after this is solid.
+
+Here's the clean order of operations:
+
+## Step 1: Create the repo on GitHub (do this in your browser)
+
+1. Go to [github.com/new](https://github.com/new)
+2. Repository name: `Radar-Signal-Classifier`
+3. Description (optional): *"Educational ML simulator for radar signal classification — signal generation, feature extraction, and classification using Random Forest, SVM, and KNN"*
+4. Visibility: **Public** (you want recruiters/DRDO to see it)
+5. **Do NOT** check "Add a README" — we'll create everything locally first to avoid merge conflicts
+6. Click **Create repository**
+
+GitHub will show you a page with setup instructions and a URL like:
+```
+https://github.com/Abhilash-K-R/Radar-Signal-Classifier.git
+```
+Keep that tab open.
+
+## Step 2: Set up the project folder locally
+
+```bash
+mkdir Radar-Signal-Classifier
+cd Radar-Signal-Classifier
+```
+
+## Step 3: Initialize Git
+
+```bash
+git init
+```
+
+## Step 4: Confirm your Git identity is set (one-time, only if not already done on your machine)
+
+```bash
+git config --global user.name "Abhilash K R"
+git config --global user.email "your-github-email@example.com"
+```
+
+(Use the same email tied to your GitHub account.)
+
+## Step 5: Create just two files for now — `.gitignore` and `README.md`
+
+```bash
+touch .gitignore
+touch README.md
+```
+
+Paste this into `.gitignore`:
+```
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+data/generated_signals/*.npy
+*.csv
+results/*.png
+.DS_Store
+```
+
+Paste this into `README.md` (just a placeholder for now — we'll write the full one in Phase 7):
+```markdown
+# Radar Signal Classification Simulator using Machine Learning
+
+Educational simulator that generates synthetic radar signals, extracts features, and classifies signal types using Machine Learning. Built as a portfolio project — not a real military radar system.
+
+**Status:** 🚧 In development
+```
+
+## Step 6: First commit and push
+
+```bash
+git add .
+git commit -m "chore: initial commit with .gitignore and README placeholder"
+git branch -M main
+git remote add origin https://github.com/Abhilash-K-R/Radar-Signal-Classifier.git
+git push -u origin main
+```
+
+A word for the day, since it's relevant right now: this kind of minimal first commit is called a **scaffold** commit (*noun used as adjective — bare-bones, just enough structure to build on*) — it establishes the repo's skeleton before any real logic exists, so your commit history reads as a clean, **incremental** (*adjective — happening in small, deliberate steps rather than all at once*) build-up from day one.
+
+---
+
+Go ahead and run through Steps 1–6. Tell me once it's pushed (or paste any error you hit), and then we'll properly start Day 1 — folder structure plus the signal generator.
+
+------------------------------------------------------------------------------------
+
+Ah, that's PowerShell — `touch` is a Unix/Linux thing and doesn't exist there natively. No issue, just a syntax swap.
+
+## PowerShell equivalents
+
+Use `New-Item` instead, or its shorter alias `ni`:
+
+```powershell
+New-Item .gitignore
+New-Item README.md
+```
+
+Or even simpler, since these just need to exist with content, you can skip the empty-file step entirely and write directly:
+
+```powershell
+"" > .gitignore
+"" > README.md
+```
+
+I'll give you the **PowerShell version** of everything going forward, since that's your environment — no need to keep translating in your head.
+
+## Let's continue from where you are
+
+You've already run `git init` successfully. Now:
+
+```powershell
+New-Item .gitignore
+New-Item README.md
+```
+
+Then open both files in a text editor (Notepad, VS Code — whatever you have) and paste in the content.
+
+**`.gitignore`** contents:
+```
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+data/generated_signals/*.npy
+*.csv
+results/*.png
+.DS_Store
+```
+
+**`README.md`** contents:
+```markdown
+# Radar Signal Classification Simulator using Machine Learning
+
+Educational simulator that generates synthetic radar signals, extracts features, and classifies signal types using Machine Learning. Built as a portfolio project — not a real military radar system.
+
+**Status:** 🚧 In development
+```
+
+A small but useful word here: this kind of small environment hiccup is sometimes called a **gotcha** (*informal noun — a hidden problem or surprise that catches you off guard*) — Windows PowerShell having different built-in commands than Mac/Linux terminals is one of the most common gotchas for developers switching environments. Good to have it sorted early rather than mid-project.
+
+## Once both files have content saved, run:
+
+```powershell
+git add .
+git commit -m "chore: initial commit with .gitignore and README placeholder"
+git branch -M main
+git remote add origin https://github.com/Abhilash-K-R/Radar-Signal-Classifier.git
+git push -u origin main
+```
+
+(Make sure you've created the empty repo on GitHub first, as in Step 1 from before, if you haven't already.)
+
+Go ahead and try `New-Item .gitignore` and `New-Item README.md` now — let me know if those go through cleanly.
+
+----------------------------------------------------------------------------------------------------
+
+Nice — repo's live. Let's move to **Day 1 proper: project folder structure + the signal generator script**.
+
+## Step 1: Create the folder structure (PowerShell)
+
+From inside `E:\Radar-Signal-Classifier`, run:
+
+```powershell
+New-Item -ItemType Directory -Path "data\generated_signals" -Force
+New-Item -ItemType Directory -Path "src" -Force
+New-Item -ItemType Directory -Path "dashboard" -Force
+New-Item -ItemType Directory -Path "results" -Force
+New-Item -ItemType Directory -Path "notebooks" -Force
+
+New-Item -ItemType File -Path "src\signal_generator.py" -Force
+New-Item -ItemType File -Path "src\noise.py" -Force
+New-Item -ItemType File -Path "src\feature_extractor.py" -Force
+New-Item -ItemType File -Path "src\train_model.py" -Force
+New-Item -ItemType File -Path "src\predictor.py" -Force
+New-Item -ItemType File -Path "dashboard\app.py" -Force
+New-Item -ItemType File -Path "requirements.txt" -Force
+```
+
+## Step 2: Virtual environment
+
+```powershell
+python -m venv venv
+venv\Scripts\activate
+```
+
+You'll see `(venv)` appear at the start of your prompt — that confirms it's active.
+
+## Step 3: Install today's packages
+
+```powershell
+pip install numpy matplotlib scipy
+```
+
+## Step 4: Fill in `requirements.txt`
+
+Open it and paste:
+```
+numpy
+pandas
+matplotlib
+scipy
+scikit-learn
+streamlit
+```
+
+## Step 5: The signal generator code
+
+Open `src\signal_generator.py` and paste this in full:
+
+```python
+import numpy as np
+
+# Sampling settings — every signal will be built the same length
+SAMPLE_RATE = 500          # how many points per second we simulate
+DURATION = 1.0             # signal length in seconds
+N_SAMPLES = int(SAMPLE_RATE * DURATION)
+TIME = np.linspace(0, DURATION, N_SAMPLES, endpoint=False)
+
+
+def generate_sine_wave(freq=5.0, amplitude=1.0):
+    """Class 1: Sine wave — represents a stable radar return."""
+    signal = amplitude * np.sin(2 * np.pi * freq * TIME)
+    return signal
+
+
+def generate_square_wave(freq=5.0, amplitude=1.0):
+    """Class 2: Square wave — a different stable signal pattern."""
+    from scipy import signal as sp_signal
+    signal = amplitude * sp_signal.square(2 * np.pi * freq * TIME)
+    return signal
+
+
+def generate_chirp_signal(f0=2.0, f1=50.0, amplitude=1.0):
+    """Class 3: Chirp — frequency increases over time. Common in real radar."""
+    from scipy.signal import chirp
+    signal = amplitude * chirp(TIME, f0=f0, f1=f1, t1=DURATION, method='linear')
+    return signal
+
+
+def generate_noisy_signal(freq=5.0, amplitude=1.0, noise_level=1.5):
+    """Class 4: A sine wave buried under heavy noise."""
+    base = generate_sine_wave(freq, amplitude)
+    heavy_noise = np.random.normal(0, noise_level, N_SAMPLES)
+    return base + heavy_noise
+
+
+def generate_dataset_raw(n_per_class=1000):
+    """
+    Generates n_per_class raw signals for each of the 4 classes.
+    Returns a dict: {label: list_of_signals}
+    """
+    dataset = {
+        "sine": [],
+        "square": [],
+        "chirp": [],
+        "noisy": []
+    }
+
+    for _ in range(n_per_class):
+        freq = np.random.uniform(3, 8)
+        amp = np.random.uniform(0.8, 1.2)
+        dataset["sine"].append(generate_sine_wave(freq, amp))
+
+        freq_sq = np.random.uniform(3, 8)
+        dataset["square"].append(generate_square_wave(freq_sq, amp))
+
+        f0 = np.random.uniform(1, 5)
+        f1 = np.random.uniform(30, 60)
+        dataset["chirp"].append(generate_chirp_signal(f0, f1, amp))
+
+        dataset["noisy"].append(generate_noisy_signal(freq, amp))
+
+    return dataset
+
+
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+    import os
+
+    sine = generate_sine_wave()
+    square = generate_square_wave()
+    chirp_sig = generate_chirp_signal()
+    noisy = generate_noisy_signal()
+
+    fig, axs = plt.subplots(4, 1, figsize=(8, 8))
+    axs[0].plot(TIME, sine); axs[0].set_title("Sine Wave (Class 1)")
+    axs[1].plot(TIME, square); axs[1].set_title("Square Wave (Class 2)")
+    axs[2].plot(TIME, chirp_sig); axs[2].set_title("Chirp Signal (Class 3)")
+    axs[3].plot(TIME, noisy); axs[3].set_title("Noisy Signal (Class 4)")
+
+    plt.tight_layout()
+
+    output_path = os.path.join("..", "results", "signal_examples.png")
+    plt.savefig(output_path)
+    print(f"Saved plot to {output_path}")
+    print("All 4 signal types generated successfully!")
+```
+
+## Step 6: Run it
+
+```powershell
+cd src
+python signal_generator.py
+```
+
+### What you should see
+- Two printed lines confirming success
+- A new file: `results\signal_examples.png` showing 4 stacked plots (sine, square, chirp, noisy)
+
+### Quick concept notes
+- **`TIME`** is the shared timeline (500 points across 1 second) every signal is drawn on
+- **Sine/Square** are stable, repeating patterns — easy to tell apart visually
+- **Chirp** sweeps frequency upward over time — you'll see the wiggles get tighter toward the end
+- **Noisy** looks chaotic — that's intentional, it's Class 4's whole identity
+
+Run it and tell me what happened — clean success, or an error message to debug together?
+
+----------------------------------------------------------------------------------
+
