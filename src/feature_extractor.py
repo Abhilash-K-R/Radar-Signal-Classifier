@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.fft import fft, fftfreq
+from config import SAMPLE_RATE
 
 
 def extract_mean(signal):

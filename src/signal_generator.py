@@ -1,10 +1,5 @@
 import numpy as np
-
-# Sampling settings — every signal will be built the same length
-SAMPLE_RATE = 500          # how many points per second we simulate
-DURATION = 1.0             # signal length in seconds
-N_SAMPLES = int(SAMPLE_RATE * DURATION)
-TIME = np.linspace(0, DURATION, N_SAMPLES, endpoint=False)
+from config import SAMPLE_RATE, DURATION, N_SAMPLES, TIME
 
 
 def generate_sine_wave(freq=5.0, amplitude=1.0):

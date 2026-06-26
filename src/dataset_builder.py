@@ -1,3 +1,12 @@
+"""
+Dataset Builder Module
+
+Generates synthetic radar signals across 4 classes, extracts statistical and
+frequency-domain features, and writes a labeled dataset CSV for ML training.
+
+Output:
+- data/dataset.csv: 4000 rows x 9 columns (8 features + 1 label)
+"""
 import os
 import sys
 import csv

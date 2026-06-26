@@ -1,3 +1,13 @@
+"""
+ML Model Training and Evaluation Module
+
+Trains three classifiers (Random Forest, SVM, KNN) on extracted signal features,
+evaluates them with standard metrics, and saves the best model for production use.
+
+Key outputs:
+- results/best_model.pkl: Trained Random Forest classifier
+- results/scaler.pkl: StandardScaler for feature normalization
+"""
 import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -6,6 +16,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from config import RANDOM_STATE, DATASET_PATH
 import joblib
 
 
@@ -21,7 +32,7 @@ def train_and_evaluate():
 
     # Split: 80% train, 20% test
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
+        X, y, test_size=0.2, random_state=RANDOM_STATE, stratify=y
     )
 
     # Scale features — SVM and KNN are sensitive to feature magnitude differences
