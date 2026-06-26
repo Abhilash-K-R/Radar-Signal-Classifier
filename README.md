@@ -82,6 +82,7 @@ Model Evaluation & Visualization
 ↓
 
 Interactive Streamlit Dashboard
+
 ---
 
 ## 📁 Project Structure
@@ -154,6 +155,7 @@ Radar-Signal-Classifier/
 ├── .gitignore                       # Exclude generated files
 
 └── README.md                        # This file
+
 ---
 ## ⚡ Quick Start (TL;DR)
 
@@ -327,23 +329,25 @@ Shridevi Institute of Engineering and Technology (SIET), Tumakuru, Karnataka
 **GitHub:** [github.com/Abhilash-K-R](https://github.com/Abhilash-K-R)  
 **Portfolio:** AKR Studio (AI-powered development)
 
+
 ---
----
 
-## 📸 Screenshots
+## 📸 Dashboard Features
 
-**Dashboard Prediction:**
-- Interactive signal generation with live classification
-- Confidence scores for each signal type
-- Real-time FFT visualization
+**Live Prediction Interface:**
+- 🎛️ Interactive signal generation with parameter sliders (frequency, amplitude, noise level)
+- 📊 Real-time classification with confidence scores for each signal type
+- 📈 FFT spectrum visualization showing dominant frequency
 
-**Evaluation Metrics:**
-- Confusion matrices for all 3 models
+**Evaluation Artifacts Generated:**
+- Confusion matrices for Random Forest, SVM, and KNN
 - Accuracy comparison bar chart
-- Feature importance rankings
+- Feature importance rankings from Random Forest
+- Signal example plots (sine, square, chirp, noisy)
+- FFT validation plots
 
-![Feature Importance](results/feature_importance.png)
-![Accuracy Comparison](results/accuracy_comparison.png)
+*All visualizations are saved to `results/` after running `python visualize.py`*
+
 
 ---
 
