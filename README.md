@@ -22,6 +22,16 @@ This project implements a complete machine learning pipeline for radar signal cl
 
 ---
 
+## 📊 Quick Stats
+
+![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python&logoColor=white)
+![Accuracy](https://img.shields.io/badge/Accuracy-95.6%25-brightgreen)
+![Models](https://img.shields.io/badge/Models-3%20(RF%2C%20SVM%2C%20KNN)-orange)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Complete-success)
+
+---
+
 ## 🎯 Problem Statement
 
 Radar systems receive multiple signal types that must be classified before further processing. This project addresses the challenge of distinguishing between four signal patterns:
@@ -145,6 +155,21 @@ Radar-Signal-Classifier/
 
 └── README.md                        # This file
 ---
+## ⚡ Quick Start (TL;DR)
+
+```bash
+git clone https://github.com/Abhilash-K-R/Radar-Signal-Classifier.git
+cd Radar-Signal-Classifier
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+cd src
+python dataset_builder.py && python train_model.py && python visualize.py
+cd ../dashboard
+streamlit run app.py
+```
+
+Then visit `http://localhost:8501`
 
 ## 🚀 How to Run
 
@@ -301,6 +326,24 @@ Shridevi Institute of Engineering and Technology (SIET), Tumakuru, Karnataka
 
 **GitHub:** [github.com/Abhilash-K-R](https://github.com/Abhilash-K-R)  
 **Portfolio:** AKR Studio (AI-powered development)
+
+---
+---
+
+## 📸 Screenshots
+
+**Dashboard Prediction:**
+- Interactive signal generation with live classification
+- Confidence scores for each signal type
+- Real-time FFT visualization
+
+**Evaluation Metrics:**
+- Confusion matrices for all 3 models
+- Accuracy comparison bar chart
+- Feature importance rankings
+
+![Feature Importance](results/feature_importance.png)
+![Accuracy Comparison](results/accuracy_comparison.png)
 
 ---
 
