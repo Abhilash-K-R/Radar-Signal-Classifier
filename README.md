@@ -2,7 +2,9 @@
 
 > An educational ML-powered simulator that generates synthetic radar signals, extracts features, and classifies different signal types using machine learning. Built as a portfolio project demonstrating signal processing, feature engineering, and classical ML workflows.
 
-**Status:** ✅ Complete (95.6% accuracy)
+**Status:** ✅ Version 1.0 Complete (95.6% accuracy)  
+**Latest Release:** [v1.0](https://github.com/Abhilash-K-R/Radar-Signal-Classifier/releases/tag/v1.0)  
+**Next:** v1.1 (Deep Learning & SNR Testing)
 
 ---
 
