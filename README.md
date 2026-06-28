@@ -2,9 +2,10 @@
 
 > An educational ML-powered simulator that generates synthetic radar signals, extracts features, and classifies different signal types using machine learning. Built as a portfolio project demonstrating signal processing, feature engineering, and classical ML workflows.
 
-**Status:** ✅ Version 1.0 Complete (95.6% accuracy)  
-**Latest Release:** [v1.0](https://github.com/Abhilash-K-R/Radar-Signal-Classifier/releases/tag/v1.0)  
-**Next:** v1.1 (Deep Learning & SNR Testing)
+**Status:** ✅ Version 1.1 Complete — Classical ML + Deep Learning Comparison  
+**Releases:** 
+- [v1.0](https://github.com/Abhilash-K-R/Radar-Signal-Classifier/releases/tag/v1.0) — Classical ML baseline (95.6% accuracy)
+- [v1.1](https://github.com/Abhilash-K-R/Radar-Signal-Classifier/releases/tag/v1.1) — Deep Learning + SNR robustness analysis
 
 ---
 
@@ -48,11 +49,76 @@ The goal is to build a classifier that generalizes to unseen signals and exceeds
 
 ## 📊 Results
 
+### Classical ML Models (v1.0)
+
 | Model | Accuracy | Precision | Recall | F1 Score |
 |---|---|---|---|---|
 | Random Forest | **95.63%** | 95.65% | 95.63% | 95.62% |
 | SVM | 94.63% | 94.89% | 94.63% | 94.61% |
 | KNN | 94.13% | 94.21% | 94.13% | 94.12% |
+
+**Finding:** All three classical models converged around 94–96% accuracy on synthetic signals, indicating that hand-engineered features enabled effective separation between signal classes regardless of algorithm choice.
+
+### Deep Learning Model (v1.1)
+
+| Model | Accuracy (Clean) | Accuracy (SNR=5dB) | Robustness |
+|---|---|---|---|
+| CNN | **100%** | 36.75% | ❌ Poor (sudden collapse) |
+| Random Forest | 95.63% | **63.00%** | ✅ Good (graceful degradation) |
+
+**Finding:** CNN achieved perfect accuracy on clean synthetic data but showed catastrophic failure under noise (SNR < 5 dB). Random Forest maintained 63% accuracy even under heavy noise, demonstrating superior real-world robustness.
+
+### SNR Testing: Noise Robustness Analysis
+
+Tested both models across Signal-to-Noise Ratios (SNR) levels to simulate real-world radar conditions:
+
+- **SNR = 40 dB (Very Clean):** RF: 92%, CNN: 100%
+- **SNR = 20 dB (Realistic):** RF: 83%, CNN: 100%
+- **SNR = 5 dB (Heavy Noise):** RF: 63%, CNN: 37% ← CNN breaks
+- **SNR = -5 dB (Extreme):** RF: 25%, CNN: 25%
+
+**Insight:** Classical ML with robust feature engineering outperformed deep learning under realistic noise conditions. This aligns with domain knowledge: hand-engineered features grounded in signal processing theory are inherently noise-tolerant.
+
+### Feature Importance (Random Forest)
+
+The most predictive features were:
+1. **Energy** (17.8%) — Signal power; robust even under noise
+2. **Standard Deviation** (17.8%) — Signal variation; remains informative despite interference
+3. **RMS** (16.1%) — Overall magnitude; captures signal strength
+4. **Dominant Frequency** (14.0%) — FFT-based; still visible in noisy spectrum
+
+---
+
+## Model Comparison Summary
+
+Classical ML (Random Forest):
+
+✅ 95.63% accuracy on clean data
+
+✅ 63% accuracy under heavy noise (realistic conditions)
+
+✅ Graceful, predictable degradation
+
+✅ Interpretable feature importance
+
+✅ Fast training (minutes)
+Deep Learning (CNN):
+
+✅ 100% accuracy on clean data
+
+✅ Perfect on synthetic signals
+
+❌ 36.75% accuracy under heavy noise
+
+❌ Sudden catastrophic failure
+
+❌ Black-box, hard to debug
+
+⚠️  Requires large real-world datasets to improve robustness
+
+**Conclusion:** For this signal classification task, Random Forest's hand-engineered features proved more robust to real-world noise than deep learning trained only on synthetic data. This demonstrates that "better algorithm ≠ better system"—context and robustness matter more than theoretical performance.
+
+---
 
 **Key Finding:** Energy and standard deviation were the most important features (17.8% importance each), indicating that magnitude-based features outweighed frequency-based features for this classification task.
 
@@ -106,6 +172,14 @@ Radar-Signal-Classifier/
 
 │   ├── train_model.py               # Train RF/SVM/KNN, save best model
 
+│   ├── cnn_model.py                 # CNN deep learning model (v1.1)
+
+│   ├── snr_testing.py               # SNR robustness testing (v1.1)
+
+│   ├── compare_models.py            # Classical ML vs CNN comparison (v1.1)
+
+│   ├── analysis.py                  # Deep analysis & insights (v1.1)
+
 │   ├── predictor.py                 # Single-signal prediction utility
 
 │   └── visualize.py                 # Generate confusion matrices, charts
@@ -137,6 +211,14 @@ Radar-Signal-Classifier/
 │   ├── accuracy_comparison.png      # Bar chart of model performance
 
 │   ├── feature_importance.png       # Random Forest feature weights
+
+│   ├── model_comparison.png         # RF/SVM/KNN/CNN side-by-side (v1.1)
+
+│   ├── snr_degradation.png          # SNR robustness curves (v1.1)
+
+│   ├── cnn_model.pth                # Trained CNN weights (v1.1)
+
+│   ├── cnn_metadata.pkl             # CNN metrics & config (v1.1)
 
 │   ├── signal_examples.png          # Raw signal visualizations
 
@@ -292,15 +374,28 @@ Built interactive Streamlit app allowing users to:
 
 ---
 
-## 🔮 Future Scope
+## 🔮 Future Scope & Lessons Learned
 
-- **Deep Learning:** Train CNN/LSTM models directly on raw signals (no manual feature extraction) and compare against classical ML
-- **Real Radar Data:** Integrate with actual radar datasets (once available) to test generalization
-- **Incremental Learning:** Implement a pipeline to retrain on new labeled signals without restarting from scratch
-- **Model Versioning:** Track multiple model versions, performance metrics, and deployment timestamps
-- **Noise Robustness:** Test classifier performance across SNR (signal-to-noise ratio) levels to understand degradation curves
+### Completed in v1.1
+- ✅ Deep Learning (CNN) model trained on raw signals
+- ✅ SNR robustness testing across noise levels (40 dB to -5 dB)
+- ✅ Comparative analysis: Classical ML vs Deep Learning
+- ✅ Documentation of real-world deployment implications
+
+### Remaining Enhancements
+- **Real Radar Data:** Integrate actual radar signal datasets to test generalization
+- **Model Ensembling:** Combine Random Forest (for low-SNR) + CNN (for high-SNR) with SNR-based switching
+- **Data Augmentation for CNN:** Train CNN with noise-augmented data to improve robustness
+- **Incremental Learning:** Implement pipeline to retrain on new labeled signals without restarting
 - **Explainability:** Add SHAP or LIME for per-prediction feature attribution
-- **Web Deployment:** Host the dashboard on AWS/GCP for broader accessibility
+- **Web Deployment:** Host dashboard on AWS/GCP for broader accessibility
+- **Bayesian Uncertainty:** Quantify model confidence, not just accuracy
+
+### Key Learning
+
+This project revealed a fundamental trade-off in ML systems: **synthetic data enables perfect test performance, but real-world robustness requires grappling with distribution shift.** The CNN's perfect accuracy on clean data masked a critical vulnerability to noise that Random Forest, with its noise-tolerant engineered features, naturally resisted.
+
+For mission-critical systems (like radar), robustness under adverse conditions often outweighs marginal accuracy improvements on ideal data.
 
 ---
 
@@ -311,6 +406,7 @@ Built interactive Streamlit app allowing users to:
 - Pandas — Data manipulation
 - Scikit-learn — Classical ML (Random Forest, SVM, KNN)
 - SciPy — Signal processing (FFT, chirp generation)
+- PyTorch — Deep Learning (CNN model, v1.1)
 
 **Visualization & Dashboard:**
 - Matplotlib — Static plots and charts
