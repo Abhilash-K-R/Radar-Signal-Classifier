@@ -392,7 +392,7 @@ Computer Science Engineering, 2027 batch
 Shridevi Institute of Engineering and Technology (SIET), Tumakuru, Karnataka
 
 **GitHub:** [github.com/Abhilash-K-R](https://github.com/Abhilash-K-R)  
-**LinkedIn:** [linkedin.com/in/Abhilash-K-R](https://linkedin.com/in/Abhilash-K-R)
+**LinkedIn:** [linkedin.com/in/Abhilash-K-R](https://www.linkedin.com/in/mr-abhilash-k-r)
 
 ---
 
