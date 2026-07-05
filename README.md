@@ -1,3 +1,8 @@
+Perfect — you're absolutely right. The badges need updating and the formatting needs to be **meticulous** (*adjective — showing great attention to detail; very careful and precise*). Here's the complete, production-ready README you can copy-paste entirely:
+
+---
+
+```markdown
 # 🛰️ Radar Signal Classification Simulator
 
 > An educational ML-powered simulator that generates synthetic radar signals, extracts features, and classifies different signal types using machine learning. Built as a portfolio project demonstrating signal processing, feature engineering, and classical ML workflows.
@@ -9,6 +14,17 @@
 
 ---
 
+## 📊 Quick Stats
+
+![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python&logoColor=white)
+![Accuracy](https://img.shields.io/badge/Accuracy-95.6%25-brightgreen)
+![Models](https://img.shields.io/badge/Models-4%20(RF%2C%20SVM%2C%20KNN%2C%20CNN)-orange)
+![Deep Learning](https://img.shields.io/badge/Deep%20Learning-PyTorch-red?logo=pytorch)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-v1.1%20Complete-success)
+
+---
+
 ## 📋 Overview
 
 This project implements a complete machine learning pipeline for radar signal classification:
@@ -16,22 +32,13 @@ This project implements a complete machine learning pipeline for radar signal cl
 1. **Signal Generation** — Synthetic radar-like signals (sine, square, chirp, noisy)
 2. **Noise Injection** — Gaussian and white noise simulation
 3. **Feature Extraction** — Statistical and frequency-domain features via FFT
-4. **Model Training** — Random Forest, SVM, KNN classifiers
+4. **Model Training** — Random Forest, SVM, KNN classifiers + CNN deep learning
 5. **Evaluation** — Accuracy, precision, recall, F1 score metrics
-6. **Visualization** — Confusion matrices, FFT plots, feature importance
-7. **Interactive Dashboard** — Streamlit app for real-time predictions
+6. **SNR Testing** — Robustness analysis across noise levels
+7. **Visualization** — Confusion matrices, FFT plots, feature importance, SNR curves
+8. **Interactive Dashboard** — Streamlit app for real-time predictions
 
 **Note:** This is an educational simulator, not a real military radar system.
-
----
-
-## 📊 Quick Stats
-
-![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python&logoColor=white)
-![Accuracy](https://img.shields.io/badge/Accuracy-95.6%25-brightgreen)
-![Models](https://img.shields.io/badge/Models-3%20(RF%2C%20SVM%2C%20KNN)-orange)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Status](https://img.shields.io/badge/Status-Complete-success)
 
 ---
 
@@ -91,156 +98,99 @@ The most predictive features were:
 
 ## Model Comparison Summary
 
+```
 Classical ML (Random Forest):
+  ✅ 95.63% accuracy on clean data
+  ✅ 63% accuracy under heavy noise (realistic conditions)
+  ✅ Graceful, predictable degradation
+  ✅ Interpretable feature importance
+  ✅ Fast training (minutes)
 
-✅ 95.63% accuracy on clean data
-
-✅ 63% accuracy under heavy noise (realistic conditions)
-
-✅ Graceful, predictable degradation
-
-✅ Interpretable feature importance
-
-✅ Fast training (minutes)
 Deep Learning (CNN):
-
-✅ 100% accuracy on clean data
-
-✅ Perfect on synthetic signals
-
-❌ 36.75% accuracy under heavy noise
-
-❌ Sudden catastrophic failure
-
-❌ Black-box, hard to debug
-
-⚠️  Requires large real-world datasets to improve robustness
+  ✅ 100% accuracy on clean data
+  ✅ Perfect on synthetic signals
+  ❌ 36.75% accuracy under heavy noise
+  ❌ Sudden catastrophic failure
+  ❌ Black-box, hard to debug
+  ⚠️  Requires large real-world datasets to improve robustness
+```
 
 **Conclusion:** For this signal classification task, Random Forest's hand-engineered features proved more robust to real-world noise than deep learning trained only on synthetic data. This demonstrates that "better algorithm ≠ better system"—context and robustness matter more than theoretical performance.
 
 ---
 
-**Key Finding:** Energy and standard deviation were the most important features (17.8% importance each), indicating that magnitude-based features outweighed frequency-based features for this classification task.
-
----
-
 ## 🛠️ Architecture
+
+```
 Signal Generator (sine, square, chirp, noisy)
-
-↓
-
+       ↓
 Noise Injection (Gaussian, white)
-
-↓
-
+       ↓
 Feature Extractor (8 features: mean, std, max, min, RMS, energy, peak-to-peak, dominant_frequency)
-
-↓
-
+       ↓
 Dataset Builder (4000 labeled samples)
-
-↓
-
-ML Training Engine (Random Forest, SVM, KNN)
-
-↓
-
+       ↓
+ML Training Engine (Random Forest, SVM, KNN, CNN)
+       ↓
 Model Evaluation & Visualization
-
-↓
-
+       ↓
+SNR Robustness Testing
+       ↓
 Interactive Streamlit Dashboard
+```
 
 ---
 
 ## 📁 Project Structure
+
+```
 Radar-Signal-Classifier/
-
 │
-
 ├── src/
-
 │   ├── config.py                    # Centralized constants
-
 │   ├── signal_generator.py          # Synthetic signal generation
-
 │   ├── noise.py                     # Gaussian and white noise injection
-
 │   ├── feature_extractor.py         # FFT and statistical features
-
 │   ├── dataset_builder.py           # Generate 4000-row dataset
-
 │   ├── train_model.py               # Train RF/SVM/KNN, save best model
-
 │   ├── cnn_model.py                 # CNN deep learning model (v1.1)
-
 │   ├── snr_testing.py               # SNR robustness testing (v1.1)
-
 │   ├── compare_models.py            # Classical ML vs CNN comparison (v1.1)
-
 │   ├── analysis.py                  # Deep analysis & insights (v1.1)
-
 │   ├── predictor.py                 # Single-signal prediction utility
-
 │   └── visualize.py                 # Generate confusion matrices, charts
-
 │
-
 ├── dashboard/
-
 │   └── app.py                       # Streamlit interactive dashboard
-
 │
-
 ├── data/
-
 │   ├── generated_signals/           # Raw signal storage
-
 │   └── dataset.csv                  # 4000 labeled feature vectors
-
 │
-
 ├── results/
-
 │   ├── best_model.pkl               # Trained Random Forest classifier
-
 │   ├── scaler.pkl                   # StandardScaler for feature normalization
-
-│   ├── confusion_matrix_*.png       # Per-model confusion matrices
-
+│   ├── confusion_matrix_random_forest.png  # RF confusion matrix
 │   ├── accuracy_comparison.png      # Bar chart of model performance
-
 │   ├── feature_importance.png       # Random Forest feature weights
-
 │   ├── model_comparison.png         # RF/SVM/KNN/CNN side-by-side (v1.1)
-
 │   ├── snr_degradation.png          # SNR robustness curves (v1.1)
-
 │   ├── cnn_model.pth                # Trained CNN weights (v1.1)
-
 │   ├── cnn_metadata.pkl             # CNN metrics & config (v1.1)
-
 │   ├── signal_examples.png          # Raw signal visualizations
-
 │   ├── noise_examples.png           # Noise injection demonstration
-
 │   └── fft_check.png                # FFT validation plot
-
 │
-
 ├── notebooks/
-
 │   └── experimentation.ipynb        # Jupyter notebook for exploration
-
 │
-
 ├── requirements.txt                 # Python dependencies
-
 ├── .gitignore                       # Exclude generated files
-
 └── README.md                        # This file
+```
 
 ---
+
 ## ⚡ Quick Start (TL;DR)
 
 ```bash
@@ -256,6 +206,8 @@ streamlit run app.py
 ```
 
 Then visit `http://localhost:8501`
+
+---
 
 ## 🚀 How to Run
 
@@ -279,7 +231,7 @@ venv\Scripts\activate  # Windows
 pip install -r requirements.txt
 ```
 
-### Generate Dataset & Train Model
+### Generate Dataset & Train Classical Models
 
 ```bash
 cd src
@@ -294,10 +246,23 @@ python train_model.py
 python visualize.py
 ```
 
+### Train Deep Learning Model & Run SNR Tests (v1.1)
+
+```bash
+# Train CNN on raw signal data
+python cnn_model.py
+
+# Test robustness across noise levels
+python snr_testing.py
+
+# Compare all 4 models
+python compare_models.py
+```
+
 ### Launch Interactive Dashboard
 
 ```bash
-cd dashboard
+cd ../dashboard
 streamlit run app.py
 ```
 
@@ -344,15 +309,20 @@ Constructed a CSV with 4000 rows and 9 columns (8 features + 1 label).
 ### Phase 5: Model Training
 - **Train/Test Split:** 80/20 with stratification to preserve class balance
 - **Scaling:** StandardScaler (SVM and KNN require normalized features)
-- **Models Trained:**
+- **Classical Models:**
   - Random Forest: 100 trees, `random_state=42`
   - SVM: RBF kernel
   - KNN: k=5 neighbors
+- **Deep Learning:**
+  - CNN: 3 convolutional layers, trained on raw 500-sample signals
 
-### Phase 6: Evaluation
-Compared using standard ML metrics: accuracy, precision, recall, F1 score.
+### Phase 6: SNR Robustness Testing
+Evaluated both classical and deep learning models across Signal-to-Noise Ratios (SNR = 40, 30, 20, 15, 10, 5, 0, -5 dB) to measure real-world robustness under degraded signal conditions.
 
-### Phase 7: Dashboard
+### Phase 7: Evaluation & Comparison
+Compared using standard ML metrics: accuracy, precision, recall, F1 score. Analyzed failure modes and degradation patterns.
+
+### Phase 8: Dashboard
 Built interactive Streamlit app allowing users to:
 - Generate signals with custom parameters
 - Upload CSV signal data
@@ -364,7 +334,7 @@ Built interactive Streamlit app allowing users to:
 
 ## 💡 Key Learnings
 
-1. **Feature Engineering > Algorithm Choice:** All three models converged around 94–96% accuracy, showing that good features matter more than algorithmic sophistication.
+1. **Feature Engineering > Algorithm Choice:** All three classical models converged around 94–96% accuracy, showing that good features matter more than algorithmic sophistication.
 
 2. **Convergence as Validation:** Multiple independent algorithms arriving at similar performance suggests the classification task is genuinely solvable, not a lucky outlier.
 
@@ -372,24 +342,26 @@ Built interactive Streamlit app allowing users to:
 
 4. **Reproducibility Matters:** Using `random_state=42` and version-controlled training makes results auditable and repeatable — critical for scientific credibility.
 
+5. **Robustness > Peak Performance:** CNN's perfect accuracy on clean data became a liability when signals were corrupted by noise. Random Forest's graceful degradation proved more pragmatic for real-world deployment.
+
 ---
 
 ## 🔮 Future Scope & Lessons Learned
 
 ### Completed in v1.1
 - ✅ Deep Learning (CNN) model trained on raw signals
-- ✅ SNR robustness testing across noise levels (40 dB to -5 dB)
+- ✅ SNR robustness testing across 8 noise levels (40 dB to -5 dB)
 - ✅ Comparative analysis: Classical ML vs Deep Learning
 - ✅ Documentation of real-world deployment implications
 
 ### Remaining Enhancements
-- **Real Radar Data:** Integrate actual radar signal datasets to test generalization
-- **Model Ensembling:** Combine Random Forest (for low-SNR) + CNN (for high-SNR) with SNR-based switching
-- **Data Augmentation for CNN:** Train CNN with noise-augmented data to improve robustness
-- **Incremental Learning:** Implement pipeline to retrain on new labeled signals without restarting
-- **Explainability:** Add SHAP or LIME for per-prediction feature attribution
-- **Web Deployment:** Host dashboard on AWS/GCP for broader accessibility
-- **Bayesian Uncertainty:** Quantify model confidence, not just accuracy
+- **Real Radar Data:** Integrate actual radar signal datasets to test generalization beyond synthetic data
+- **Model Ensembling:** Combine Random Forest (for low-SNR) + CNN (for high-SNR) with SNR-based switching logic
+- **Data Augmentation for CNN:** Train CNN with noise-augmented data to improve robustness and close the gap with classical ML
+- **Incremental Learning:** Implement pipeline to retrain models on new labeled signals without restarting from scratch
+- **Explainability:** Add SHAP or LIME for per-prediction feature attribution and model transparency
+- **Web Deployment:** Host dashboard on AWS/GCP for broader accessibility and real-time collaboration
+- **Bayesian Uncertainty:** Quantify model confidence intervals, not just point predictions
 
 ### Key Learning
 
@@ -413,8 +385,28 @@ For mission-critical systems (like radar), robustness under adverse conditions o
 - Streamlit — Interactive web dashboard
 
 **Development & Deployment:**
-- Git/GitHub — Version control
-- Joblib — Model serialization
+- Git/GitHub — Version control and release management
+- Joblib — Model serialization and metadata storage
+
+---
+
+## 📸 Dashboard Features
+
+**Live Prediction Interface:**
+- 🎛️ Interactive signal generation with parameter sliders (frequency, amplitude, noise level)
+- 📊 Real-time classification with confidence scores for each signal type
+- 📈 FFT spectrum visualization showing dominant frequency
+- 📉 Side-by-side time-domain and frequency-domain plots
+
+**Evaluation Artifacts Generated:**
+- Confusion matrices for Random Forest, SVM, and KNN
+- Accuracy comparison bar chart (4 models)
+- Feature importance rankings from Random Forest
+- Signal example plots (sine, square, chirp, noisy)
+- FFT validation plots
+- SNR degradation curves
+
+*All visualizations are saved to `results/` after running the pipeline.*
 
 ---
 
@@ -425,38 +417,21 @@ Computer Science Engineering, 2027 batch
 Shridevi Institute of Engineering and Technology (SIET), Tumakuru, Karnataka
 
 **GitHub:** [github.com/Abhilash-K-R](https://github.com/Abhilash-K-R)  
+**LinkedIn:** [linkedin.com/in/Abhilash-K-R](https://linkedin.com/in/Abhilash-K-R)  
 **Portfolio:** AKR Studio (AI-powered development)
-
-
----
-
-## 📸 Dashboard Features
-
-**Live Prediction Interface:**
-- 🎛️ Interactive signal generation with parameter sliders (frequency, amplitude, noise level)
-- 📊 Real-time classification with confidence scores for each signal type
-- 📈 FFT spectrum visualization showing dominant frequency
-
-**Evaluation Artifacts Generated:**
-- Confusion matrices for Random Forest, SVM, and KNN
-- Accuracy comparison bar chart
-- Feature importance rankings from Random Forest
-- Signal example plots (sine, square, chirp, noisy)
-- FFT validation plots
-
-*All visualizations are saved to `results/` after running `python visualize.py`*
-
 
 ---
 
 ## 📄 License
 
-This project is open source and available under the MIT License.
+This project is open source and available under the MIT License. See LICENSE file for details.
 
 ---
 
 ## 🙏 Acknowledgments
 
 - Inspired by real radar signal processing and domain requirements
-- Built as part of structured portfolio development for internship applications
+- Built as part of structured portfolio development for internship applications (DRDO-LRDE 2027)
 - Developed with focus on clean code, reproducibility, and professional documentation
+- SNR testing methodology influenced by robustness evaluation practices in signal processing literature
+```
