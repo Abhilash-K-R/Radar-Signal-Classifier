@@ -1,8 +1,4 @@
-Perfect — you're absolutely right. The badges need updating and the formatting needs to be **meticulous** (*adjective — showing great attention to detail; very careful and precise*). Here's the complete, production-ready README you can copy-paste entirely:
 
----
-
-```markdown
 # 🛰️ Radar Signal Classification Simulator
 
 > An educational ML-powered simulator that generates synthetic radar signals, extracts features, and classifies different signal types using machine learning. Built as a portfolio project demonstrating signal processing, feature engineering, and classical ML workflows.
@@ -90,7 +86,7 @@ Tested both models across Signal-to-Noise Ratios (SNR) levels to simulate real-w
 
 The most predictive features were:
 1. **Energy** (17.8%) — Signal power; robust even under noise
-2. **Standard Deviation** (17.8%) — Signal variation; remains informative despite interference
+2. **Standard Deviation** (17.8%) — Magnitude variation; remains informative despite interference
 3. **RMS** (16.1%) — Overall magnitude; captures signal strength
 4. **Dominant Frequency** (14.0%) — FFT-based; still visible in noisy spectrum
 
@@ -126,11 +122,11 @@ Signal Generator (sine, square, chirp, noisy)
        ↓
 Noise Injection (Gaussian, white)
        ↓
-Feature Extractor (8 features: mean, std, max, min, RMS, energy, peak-to-peak, dominant_frequency)
+Feature Extractor (8 features)
        ↓
 Dataset Builder (4000 labeled samples)
        ↓
-ML Training Engine (Random Forest, SVM, KNN, CNN)
+ML Training Engine (RF, SVM, KNN, CNN)
        ↓
 Model Evaluation & Visualization
        ↓
@@ -140,10 +136,10 @@ Interactive Streamlit Dashboard
 ```
 
 ---
-
+```markdown
 ## 📁 Project Structure
 
-```
+
 Radar-Signal-Classifier/
 │
 ├── src/
@@ -170,16 +166,16 @@ Radar-Signal-Classifier/
 ├── results/
 │   ├── best_model.pkl               # Trained Random Forest classifier
 │   ├── scaler.pkl                   # StandardScaler for feature normalization
-│   ├── confusion_matrix_random_forest.png  # RF confusion matrix
-│   ├── accuracy_comparison.png      # Bar chart of model performance
-│   ├── feature_importance.png       # Random Forest feature weights
-│   ├── model_comparison.png         # RF/SVM/KNN/CNN side-by-side (v1.1)
-│   ├── snr_degradation.png          # SNR robustness curves (v1.1)
 │   ├── cnn_model.pth                # Trained CNN weights (v1.1)
 │   ├── cnn_metadata.pkl             # CNN metrics & config (v1.1)
-│   ├── signal_examples.png          # Raw signal visualizations
-│   ├── noise_examples.png           # Noise injection demonstration
-│   └── fft_check.png                # FFT validation plot
+│   ├── confusion_matrix_random_forest.png
+│   ├── accuracy_comparison.png
+│   ├── feature_importance.png
+│   ├── model_comparison.png         # RF/SVM/KNN/CNN side-by-side (v1.1)
+│   ├── snr_degradation.png          # SNR robustness curves (v1.1)
+│   ├── signal_examples.png
+│   ├── noise_examples.png
+│   └── fft_check.png
 │
 ├── notebooks/
 │   └── experimentation.ipynb        # Jupyter notebook for exploration
@@ -218,16 +214,10 @@ Then visit `http://localhost:8501`
 ### Setup
 
 ```bash
-# Clone the repository
 git clone https://github.com/Abhilash-K-R/Radar-Signal-Classifier.git
 cd Radar-Signal-Classifier
-
-# Create virtual environment
 python -m venv venv
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # Mac/Linux
-
-# Install dependencies
+venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -235,27 +225,16 @@ pip install -r requirements.txt
 
 ```bash
 cd src
-
-# Generate 4000 synthetic signals with extracted features
 python dataset_builder.py
-
-# Train classifiers and save the best model
 python train_model.py
-
-# Generate visualizations
 python visualize.py
 ```
 
 ### Train Deep Learning Model & Run SNR Tests (v1.1)
 
 ```bash
-# Train CNN on raw signal data
 python cnn_model.py
-
-# Test robustness across noise levels
 python snr_testing.py
-
-# Compare all 4 models
 python compare_models.py
 ```
 
@@ -272,12 +251,12 @@ Then open `http://localhost:8501` in your browser.
 
 ## 📈 Feature Importance
 
-Random Forest identified these features as most predictive (in order):
+Random Forest identified these features as most predictive:
 
-1. **Energy** (17.8%) — Signal power; noisy signals have dramatically higher energy
-2. **Standard Deviation** (17.8%) — Magnitude variation; stable signals differ from noisy
-3. **RMS** (16.1%) — Root mean square; captures overall signal strength regardless of sign
-4. **Dominant Frequency** (14.0%) — FFT-based peak frequency; distinguishes periodic patterns
+1. **Energy** (17.8%) — Signal power; robust even under noise
+2. **Standard Deviation** (17.8%) — Magnitude variation; remains informative despite interference
+3. **RMS** (16.1%) — Overall magnitude; captures signal strength
+4. **Dominant Frequency** (14.0%) — FFT-based; still visible in noisy spectrum
 5. Others (< 11% each)
 
 **Insight:** Magnitude-based features dominated over frequency-domain features, suggesting that energy and variance alone provide strong separation between signal types.
@@ -309,15 +288,11 @@ Constructed a CSV with 4000 rows and 9 columns (8 features + 1 label).
 ### Phase 5: Model Training
 - **Train/Test Split:** 80/20 with stratification to preserve class balance
 - **Scaling:** StandardScaler (SVM and KNN require normalized features)
-- **Classical Models:**
-  - Random Forest: 100 trees, `random_state=42`
-  - SVM: RBF kernel
-  - KNN: k=5 neighbors
-- **Deep Learning:**
-  - CNN: 3 convolutional layers, trained on raw 500-sample signals
+- **Classical Models:** Random Forest (100 trees), SVM (RBF kernel), KNN (k=5)
+- **Deep Learning:** CNN (3 convolutional layers, trained on raw 500-sample signals)
 
 ### Phase 6: SNR Robustness Testing
-Evaluated both classical and deep learning models across Signal-to-Noise Ratios (SNR = 40, 30, 20, 15, 10, 5, 0, -5 dB) to measure real-world robustness under degraded signal conditions.
+Evaluated both classical and deep learning models across SNR levels (40, 30, 20, 15, 10, 5, 0, -5 dB) to measure real-world robustness under degraded signal conditions.
 
 ### Phase 7: Evaluation & Comparison
 Compared using standard ML metrics: accuracy, precision, recall, F1 score. Analyzed failure modes and degradation patterns.
@@ -357,10 +332,10 @@ Built interactive Streamlit app allowing users to:
 ### Remaining Enhancements
 - **Real Radar Data:** Integrate actual radar signal datasets to test generalization beyond synthetic data
 - **Model Ensembling:** Combine Random Forest (for low-SNR) + CNN (for high-SNR) with SNR-based switching logic
-- **Data Augmentation for CNN:** Train CNN with noise-augmented data to improve robustness and close the gap with classical ML
-- **Incremental Learning:** Implement pipeline to retrain models on new labeled signals without restarting from scratch
+- **Data Augmentation for CNN:** Train CNN with noise-augmented data to improve robustness
+- **Incremental Learning:** Implement pipeline to retrain models on new labeled signals without restarting
 - **Explainability:** Add SHAP or LIME for per-prediction feature attribution and model transparency
-- **Web Deployment:** Host dashboard on AWS/GCP for broader accessibility and real-time collaboration
+- **Web Deployment:** Host dashboard on AWS/GCP for broader accessibility
 - **Bayesian Uncertainty:** Quantify model confidence intervals, not just point predictions
 
 ### Key Learning
@@ -417,8 +392,7 @@ Computer Science Engineering, 2027 batch
 Shridevi Institute of Engineering and Technology (SIET), Tumakuru, Karnataka
 
 **GitHub:** [github.com/Abhilash-K-R](https://github.com/Abhilash-K-R)  
-**LinkedIn:** [linkedin.com/in/Abhilash-K-R](https://linkedin.com/in/Abhilash-K-R)  
-**Portfolio:** AKR Studio (AI-powered development)
+**LinkedIn:** [linkedin.com/in/Abhilash-K-R](https://linkedin.com/in/Abhilash-K-R)
 
 ---
 
@@ -431,7 +405,7 @@ This project is open source and available under the MIT License. See LICENSE fil
 ## 🙏 Acknowledgments
 
 - Inspired by real radar signal processing and domain requirements
-- Built as part of structured portfolio development for internship applications (DRDO-LRDE 2027)
+- Built as part of structured portfolio development for internship applications (DRDO-LRDE 2026)
 - Developed with focus on clean code, reproducibility, and professional documentation
 - SNR testing methodology influenced by robustness evaluation practices in signal processing literature
 ```
