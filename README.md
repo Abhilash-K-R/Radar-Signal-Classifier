@@ -258,7 +258,20 @@ streamlit run app.py
 Then open `http://localhost:8501` in your browser.
 
 ---
+## 📸 Dashboard in Action
 
+**Full Dashboard View :**
+<img width="1897" height="900" alt="Screenshot 2026-07-06 094245" src="https://github.com/user-attachments/assets/3adeb798-9d7d-4d19-86ff-5e02f02e3f35" />
+
+
+**Chirp Signal Classification :**
+<img width="1893" height="908" alt="Screenshot 2026-07-06 094337" src="https://github.com/user-attachments/assets/f61132a9-512a-4779-bdea-e0dc2a941f8a" />
+
+
+**Noisy Signal Handling :**
+<img width="1887" height="902" alt="Screenshot 2026-07-06 094400" src="https://github.com/user-attachments/assets/32c9c12f-7dea-44d5-9b15-3ac66b2d6325" />
+
+---
 ## 📈 Feature Importance
 
 Random Forest identified these features as most predictive:
