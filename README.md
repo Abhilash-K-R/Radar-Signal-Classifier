@@ -221,10 +221,20 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### Generate Dataset & Train Classical Models
+### Generate Signal Examples & Validate Feature Extraction
 
 ```bash
 cd src
+python signal_generator.py
+python noise.py
+python feature_extractor.py
+```
+
+This generates `signal_examples.png`, `noise_examples.png`, and `fft_check.png` in `results/` — useful for visually verifying signal generation and FFT logic before training.
+
+### Generate Dataset & Train Classical Models
+
+```bash
 python dataset_builder.py
 python train_model.py
 python visualize.py
