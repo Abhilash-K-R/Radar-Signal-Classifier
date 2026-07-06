@@ -160,7 +160,7 @@ Radar-Signal-Classifier/
 │   └── app.py                       # Streamlit interactive dashboard
 │
 ├── data/
-│   ├── generated_signals/           # Raw signal storage
+│   ├── generated_signals/           # Reserved for raw signal exports (currently unused — signals are generated in-memory)
 │   └── dataset.csv                  # 4000 labeled feature vectors
 │
 ├── results/
@@ -178,7 +178,7 @@ Radar-Signal-Classifier/
 │   └── fft_check.png
 │
 ├── notebooks/
-│   └── experimentation.ipynb        # Jupyter notebook for exploration
+│   └── experimentation.ipynb        # Placeholder for future exploratory analysis (not actively used)
 │
 ├── requirements.txt                 # Python dependencies
 ├── .gitignore                       # Exclude generated files
