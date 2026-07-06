@@ -6,3 +6,4 @@ data/generated_signals/*.npy
 *.csv
 results/*.png
 .DS_Store
+steps_follow.txt
