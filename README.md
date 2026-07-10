@@ -376,7 +376,7 @@ For mission-critical systems (like radar), robustness under adverse conditions o
 - Pandas — Data manipulation
 - Scikit-learn — Classical ML (Random Forest, SVM, KNN)
 - SciPy — Signal processing (FFT, chirp generation)
-- PyTorch — Deep Learning (CNN model, v1.1)
+- PyTorch — Deep Learning (CNN model,v1.1)
 
 **Visualization & Dashboard:**
 - Matplotlib — Static plots and charts
