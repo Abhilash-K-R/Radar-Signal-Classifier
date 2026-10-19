@@ -26,12 +26,8 @@ from pydantic import BaseModel, Field
 SRC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src")
 sys.path.insert(0, SRC_DIR)
 
-try:
-    from src.config import SAMPLE_RATE, N_SAMPLES, RESULTS_DIR
-    from src.predictor import RadarPredictor, generate_signal
-except ImportError:
-    from config import SAMPLE_RATE, N_SAMPLES, RESULTS_DIR
-    from predictor import RadarPredictor, generate_signal
+from src.config import SAMPLE_RATE, N_SAMPLES, RESULTS_DIR
+from src.predictor import RadarPredictor, generate_signal
 
 
 # ─── App Setup ─────────────────────────────────────────────────────────────

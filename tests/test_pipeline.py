@@ -14,42 +14,23 @@ import pytest
 SRC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src")
 sys.path.insert(0, SRC_DIR)
 
-try:
-    from src.config import SAMPLE_RATE, N_SAMPLES, DURATION, TIME
-    from src.signal_generator import (
-        generate_sine_wave,
-        generate_square_wave,
-        generate_chirp_signal,
-        generate_noisy_signal,
-    )
-    from src.noise import add_gaussian_noise, add_white_noise, add_noise
-    from src.feature_extractor import (
-        extract_features,
-        extract_mean,
-        extract_std,
-        extract_rms,
-        extract_energy,
-        extract_peak_to_peak,
-        extract_dominant_frequency,
-    )
-except ImportError:
-    from config import SAMPLE_RATE, N_SAMPLES, DURATION, TIME
-    from signal_generator import (
-        generate_sine_wave,
-        generate_square_wave,
-        generate_chirp_signal,
-        generate_noisy_signal,
-    )
-    from noise import add_gaussian_noise, add_white_noise, add_noise
-    from feature_extractor import (
-        extract_features,
-        extract_mean,
-        extract_std,
-        extract_rms,
-        extract_energy,
-        extract_peak_to_peak,
-        extract_dominant_frequency,
-    )
+from src.config import SAMPLE_RATE, N_SAMPLES, DURATION, TIME
+from src.signal_generator import (
+    generate_sine_wave,
+    generate_square_wave,
+    generate_chirp_signal,
+    generate_noisy_signal,
+)
+from src.noise import add_gaussian_noise, add_white_noise, add_noise
+from src.feature_extractor import (
+    extract_features,
+    extract_mean,
+    extract_std,
+    extract_rms,
+    extract_energy,
+    extract_peak_to_peak,
+    extract_dominant_frequency,
+)
 
 
 # ─── Signal Generation Tests ───────────────────────────────────────────────
@@ -209,10 +190,7 @@ class TestPredictor:
 
     @pytest.fixture
     def rf_predictor(self):
-        try:
-            from src.predictor import RadarPredictor
-        except ImportError:
-            from predictor import RadarPredictor
+        from src.predictor import RadarPredictor
         model_path = os.path.join(SRC_DIR, "..", "results", "best_model.pkl")
         if not os.path.exists(model_path):
             pytest.skip("Trained model not found — run train_model.py first")
