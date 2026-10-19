@@ -1,0 +1,23 @@
+services:
+  # FastAPI Backend
+  - type: web
+    name: radar-classifier-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt && cd src && python dataset_builder.py && python train_model.py
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    plan: free
+    healthCheckPath: /health
+
+  # Streamlit Dashboard
+  - type: web
+    name: radar-classifier-dashboard
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run dashboard/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    plan: free

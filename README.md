@@ -3,22 +3,25 @@
 
 > An educational ML-powered simulator that generates synthetic radar signals, extracts features, and classifies different signal types using machine learning. Built as a portfolio project demonstrating signal processing, feature engineering, and classical ML workflows.
 
-**Status:** ✅ Version 1.1 Complete — Classical ML + Deep Learning Comparison  
+**Status:** ✅ Version 2.0 Complete — Classical ML, Deep Learning & Containerized Deployment  
 **Releases:** 
 - [v1.0](https://github.com/Abhilash-K-R/Radar-Signal-Classifier/releases/tag/v1.0) — Classical ML baseline (95.6% accuracy)
 - [v1.1](https://github.com/Abhilash-K-R/Radar-Signal-Classifier/releases/tag/v1.1) — Deep Learning + SNR robustness analysis
+- [v2.0](https://github.com/Abhilash-K-R/Radar-Signal-Classifier/releases/tag/v2.0) — FastAPI REST API, Docker, CI/CD & Automated Tests
 
 ---
 
 
 ## 📊 Quick Stats
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11-blue?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)
+![Docker](https://img.shields.io/badge/Container-Docker-2496ED?logo=docker&logoColor=white)
+![Tests](https://img.shields.io/badge/Tests-41%20Passed-brightgreen?logo=pytest)
 ![Accuracy](https://img.shields.io/badge/Accuracy-95.6%25-brightgreen)
-![Models](https://img.shields.io/badge/Models-4%20(RF%2C%20SVM%2C%20KNN%2C%20CNN)-orange)
 ![Deep Learning](https://img.shields.io/badge/Deep%20Learning-PyTorch-red?logo=pytorch)
 ![License](https://img.shields.io/badge/License-MIT-green)
-![Status](https://img.shields.io/badge/Status-v1.1%20Complete-success)
+![Status](https://img.shields.io/badge/Status-v2.0%20Complete-success)
 
 ---
 
@@ -409,6 +412,48 @@ For mission-critical systems (like radar), robustness under adverse conditions o
 
 ---
 
+## 🚀 Deployment & API (v2.0)
+
+### 1. FastAPI REST API
+
+Start the high-performance prediction API server:
+```bash
+uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+```
+Interactive Swagger API documentation will be available at: `http://localhost:8000/docs`
+
+Key endpoints:
+- `POST /predict/generate` — Generate a synthetic signal and classify it live
+- `POST /predict/array` — Classify an array of 500 signal samples
+- `POST /predict/upload` — Upload a CSV signal file and get classification
+- `GET /health` — Check server status and model readiness
+- `GET /models` — Inspect model metadata, accuracies, and characteristics
+
+### 2. Docker & Docker Compose
+
+Run the entire stack (FastAPI backend + Streamlit dashboard) with a single command:
+```bash
+docker-compose up --build
+```
+- API: `http://localhost:8000`
+- Dashboard: `http://localhost:8501`
+
+Or run standalone container:
+```bash
+docker build -t radar-classifier .
+docker run -p 8000:8000 radar-classifier
+```
+
+### 3. Automated Testing & CI/CD
+
+Run all 41 unit and integration tests:
+```bash
+pytest tests/ -v
+```
+GitHub Actions workflow (`.github/workflows/ci.yml`) automatically runs tests, linting (`flake8`), and verifies Docker container builds across Python 3.10 and 3.11 on every push and pull request.
+
+---
+
 ## 👤 Author
 
 **Abhilash K R**  
@@ -432,4 +477,3 @@ This project is open source and available under the MIT License. See LICENSE fil
 - Built as part of structured portfolio development for internship applications (DRDO-LRDE 2026)
 - Developed with focus on clean code, reproducibility, and professional documentation
 - SNR testing methodology influenced by robustness evaluation practices in signal processing literature
-```

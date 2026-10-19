@@ -1,9 +1,37 @@
+# Python
 venv/
+.venv/
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# IDE
 .ipynb_checkpoints/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project-specific generated files
 data/generated_signals/*.npy
 *.csv
 results/*.png
-.DS_Store
 steps_follow.txt
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Docker
+*.log
+
+# Personal reference / notes
+self/
